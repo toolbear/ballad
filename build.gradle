@@ -35,3 +35,9 @@ test {
     exceptionFormat "full"
   }
 }
+
+eclipse {
+  classpath {
+    defaultOutputDir = file('build/eclipse')
+  }
+}
