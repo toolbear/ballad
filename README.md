@@ -3,46 +3,27 @@
 Ballad provides a specification DSL similar to [rspec-given](https://github.com/rspec-given/rspec-given).
 
 ```java
-public class PostfixCalculatorSpec implements BalladSpec {
-  private Calculator subject;
+describe(PostfixCalculator.class, () -> {
+  Given(subject, new PostfixCalculator());
 
-  describe(PostfixCalculator.class, () -> {
-
-    Given(subject, new PostfixCalculator());
-
-    context("no input", () -> {
-      Then(() -> assertThat(subject.peek()).isEqualTo(0);
-    });
-
-    context("one input", () -> {
-      When(() -> subject.input(5));
-
-      Then(() -> assertThat(subject.peek()).isEqualTo(5));
-    });
-
-    context("two inputs", () -> {
-      When(() -> {
-        subject.input(5);
-        subject.input(2);
-      });
-
-      Then(() -> assertThat(subject.peek()).isEqualTo(2));
-
-      context("adding", () -> {
-        When(() -> subject.add());
-
-        Then(() -> assertThat(subject.peek()).isEqualTo(7));
-      });
-    });
+  When(() -> {
+    subject.push(5);
+    subject.push(2);
   });
-}
+
+  Then(() -> assertEquals(2, subject.peek()));
+
+  context("adding", () -> {
+    When(() -> subject.plus());
+
+    Then(() -> assertEquals(7, subject.peek()));
+  });
+});
 ```
 
 ## Installation
 
 Ballad requires Java 8 or later and JUnit 4.
-
-
 
 ## Differences from G/W/T in other languages
 
@@ -65,7 +46,45 @@ With Ballad:
 
 ## Example
 
-TODO: write me
+This example uses [AssertJ fluent assertions](http://joel-costigliola.github.io/assertj/index.html), but any assertion library can be used.
+
+```java
+public class PostfixCalculatorSpec implements BalladSpec {
+  private Calculator subject;
+
+  {
+    describe(PostfixCalculator.class, () -> {
+
+      Given(subject, new PostfixCalculator());
+
+      context("no input", () -> {
+        Then(() -> assertThat(subject.peek()).isEqualTo(0);
+      });
+
+      context("one input", () -> {
+        When(() -> subject.push(5));
+
+        Then(() -> assertThat(subject.peek()).isEqualTo(5));
+      });
+
+      context("two inputs", () -> {
+        When(() -> {
+          subject.push(5);
+          subject.push(2);
+        });
+
+        Then(() -> assertThat(subject.peek()).isEqualTo(2));
+
+        context("adding", () -> {
+          When(() -> subject.plus());
+
+          Then(() -> assertThat(subject.peek()).isEqualTo(7));
+        });
+      });
+    });
+  }
+}
+```
 
 ## TODO
 
