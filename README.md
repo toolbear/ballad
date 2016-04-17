@@ -44,15 +44,24 @@ Ballad requires Java 8 or later and JUnit 4.
 
 
 
-## Differences from G/W/T in other languages (e.g. rspec-given, jasmine-given, mocha-gwt)
+## Differences from G/W/T in other languages
 
-* Ballad is an extension to JUnit, not to an rspec-like framework. There are no
-  `#before/#beforeEach/#after/#afterEach` hooks nor is there an `#it`. This omission is
-  intentional
+Given/When/Then implementations in other languages (e.g. rspec-given, jasmine-given, mocha-gwt)
+have historically been written as extensions to rspec or an equivalent framework. They also tend
+to be written in languages that have closures.
 
-* Java 8 lambas aren't closures; variables in an outer scope must be "effectively final".
-  Two workarounds — member variables and `Var` wrappers — are available for writing
-  DRY specs.
+With Ballad:
+
+* There are no `#before/#beforeEach/#after/#afterEach` hooks. You should prefer setting up
+  preconditions with `#Given`. You can use JUnit's `@Before`; there are no ordering
+  guarantees between `#Given` and `@Before` (the ordering of nested Givens is well defined, however).
+
+* There are no `#it` blocks; specifications/assertions must be written with `#Then`.
+
+* Java 8 lambas aren't closures; variables in an outer scope must be "effectively final". Part
+  of what makes Given/When/Then so expressive and consise is altering initial conditions in
+  nested scopes while reusing `#Given` and `#When` clauses from outer scopes. Two workarounds
+  — member variables and `Var` wrappers — can be used to approximate closures.
 
 ## Example
 
