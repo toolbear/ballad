@@ -7,11 +7,17 @@ public class Ballad {
     return new Var<>(value);
   }
 
-  static final void recruit(Scribe scribe) {
-    Ballad.scribe.set(scribe);
+  static final void recruit(Scribe s) {
+    scribe.set(s);
   }
 
   static final Scribe scribe() {
-    return Ballad.scribe.get();
+    return scribe.get();
+  }
+
+  static final void retire(Scribe s) {
+    if (scribe.get() == s) {
+      scribe.remove();
+    }
   }
 }

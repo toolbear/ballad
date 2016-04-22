@@ -2,6 +2,7 @@ package ballad;
 
 import static ballad.Ballad.var;
 import static org.hamcrest.CoreMatchers.anything;
+import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,7 +33,7 @@ public class BalladSpecTest implements WithMockito {
       }
     };
 
-    verify(scribe).recordPostcondition(postcondition);
+    verify(scribe).chroniclePostcondition(eq(postcondition), anyPostconditionError());
   }
 
   @Test
@@ -47,7 +48,7 @@ public class BalladSpecTest implements WithMockito {
       }
     };
 
-    verify(scribe).recordPostcondition(postcondition);
+    verify(scribe).chroniclePostcondition(eq(postcondition), anyPostconditionError());
   }
 
   @Test
@@ -61,7 +62,7 @@ public class BalladSpecTest implements WithMockito {
       }
     };
 
-    verify(scribe).recordPostcondition(value, postcondition);
+    verify(scribe).chroniclePostcondition(eq(value), eq(postcondition), anyPostconditionError());
   }
 
   @Test
@@ -75,7 +76,7 @@ public class BalladSpecTest implements WithMockito {
       }
     };
 
-    verify(scribe).recordPostcondition(value, postcondition);
+    verify(scribe).chroniclePostcondition(eq(value), eq(postcondition), anyPostconditionError());
   }
 
   @Test
@@ -91,7 +92,7 @@ public class BalladSpecTest implements WithMockito {
       }
     };
 
-    verify(scribe).recordPostcondition(value, postcondition);
+    verify(scribe).chroniclePostcondition(eq(value), eq(postcondition), anyPostconditionError());
   }
 
   @Test
@@ -107,7 +108,7 @@ public class BalladSpecTest implements WithMockito {
       }
     };
 
-    verify(scribe).recordPostcondition(value, postcondition);
+    verify(scribe).chroniclePostcondition(eq(value), eq(postcondition), anyPostconditionError());
   }
 
   @Test
@@ -121,13 +122,13 @@ public class BalladSpecTest implements WithMockito {
       }
     };
 
-    verify(scribe).recordPostcondition(value, isAnything);
+    verify(scribe).chroniclePostcondition(eq(value), eq(isAnything), anyPostconditionError());
   }
 
   @Test
   public void varAndMatcherPostcondition() {
     final Var<String> var = var("whatever");
-    final Matcher<Object> isAnything = anything("match anything");
+    final Matcher<String> isAnything = CoreMatchers.any(String.class);
 
     new BalladSpec() {
       {
@@ -135,6 +136,10 @@ public class BalladSpecTest implements WithMockito {
       }
     };
 
-    verify(scribe).recordPostcondition(var, isAnything);
+    verify(scribe).chroniclePostcondition(eq(var), eq(isAnything), anyPostconditionError());
+  }
+
+  private PostconditionError anyPostconditionError() {
+    return any(PostconditionError.class);
   }
 }
