@@ -7,6 +7,10 @@ public class Ballad {
     return new Var<>(value);
   }
 
+  public static final <T> Var<T> var() {
+    return new Var<>(null);
+  }
+
   static final void recruit(Scribe s) {
     scribe.set(s);
   }

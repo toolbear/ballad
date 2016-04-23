@@ -28,6 +28,20 @@ public class RecordingScribe implements Scribe {
   }
 
   @Override
+  public void chroniclePrecondition(Procedure proc) {
+    context.addPrecondition(() -> {
+      proc.invoke();
+    });
+  }
+
+  @Override
+  public <S, T extends S> void chroniclePrecondition(Var<S> var, Function<T> expression) {
+    context.addPrecondition(() -> {
+      var.set(expression.invoke());
+    });
+  }
+
+  @Override
   public void chronicleContext(Class<?> c, Procedure proc) {
     context = new Context(context, c);
     try {

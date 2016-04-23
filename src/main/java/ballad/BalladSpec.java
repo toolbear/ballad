@@ -15,6 +15,14 @@ public interface BalladSpec {
     Ballad.scribe().chronicleContext(desc, proc);
   }
 
+  default void Given(Procedure proc) {
+    Ballad.scribe().chroniclePrecondition(proc);
+  }
+
+  default <S, T extends S> void Given(Var<S> var, Function<T> expression) {
+    Ballad.scribe().chroniclePrecondition(var, expression);
+  }
+
   default void Then(Function<Boolean> expression) {
     Ballad.scribe().chroniclePostcondition(expression, PostconditionError.eager());
   }
