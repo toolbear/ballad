@@ -1,7 +1,6 @@
 package ballad;
 
 import static ballad.Ballad.var;
-import static org.hamcrest.CoreMatchers.anything;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.junit.Before;
@@ -39,7 +38,7 @@ public class BalladSpecTest implements WithMockito {
   @Test
   public void proceduralPostcondition() {
     final Procedure postcondition = () -> {
-      assert (2 != 3);
+      assert 2 != 3;
     };
 
     new BalladSpec() {
@@ -49,20 +48,6 @@ public class BalladSpecTest implements WithMockito {
     };
 
     verify(scribe).chroniclePostcondition(eq(postcondition), anyPostconditionError());
-  }
-
-  @Test
-  public void valueAndBooleanPostcondition() {
-    final int value = 42;
-    final Function1<Boolean, Integer> postcondition = (v) -> v > 0;
-
-    new BalladSpec() {
-      {
-        Then(value, postcondition);
-      }
-    };
-
-    verify(scribe).chroniclePostcondition(eq(value), eq(postcondition), anyPostconditionError());
   }
 
   @Test
@@ -80,26 +65,10 @@ public class BalladSpecTest implements WithMockito {
   }
 
   @Test
-  public void valueAndProceduralPostcondition() {
-    final int value = 42;
-    final Procedure1<Integer> postcondition = (v) -> {
-      assert (v > 0);
-    };
-
-    new BalladSpec() {
-      {
-        Then(value, postcondition);
-      }
-    };
-
-    verify(scribe).chroniclePostcondition(eq(value), eq(postcondition), anyPostconditionError());
-  }
-
-  @Test
   public void varAndProceduralPostcondition() {
     final Var<Integer> value = var(42);
     final Procedure1<Integer> postcondition = (v) -> {
-      assert (v > 0);
+      assert v > 0;
     };
 
     new BalladSpec() {
@@ -109,20 +78,6 @@ public class BalladSpecTest implements WithMockito {
     };
 
     verify(scribe).chroniclePostcondition(eq(value), eq(postcondition), anyPostconditionError());
-  }
-
-  @Test
-  public void valueAndMatcherPostcondition() {
-    final String value = "whatever";
-    final Matcher<Object> isAnything = anything("match anything");
-
-    new BalladSpec() {
-      {
-        Then(value, isAnything);
-      }
-    };
-
-    verify(scribe).chroniclePostcondition(eq(value), eq(isAnything), anyPostconditionError());
   }
 
   @Test

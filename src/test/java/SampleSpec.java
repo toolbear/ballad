@@ -10,31 +10,26 @@ import ballad.Balladeer;
 import ballad.Var;
 
 @RunWith(Balladeer.class)
-public class SampleSpec implements BalladSpec {
-  {
-    final Var<Integer> intVar = var(2);
-    final Var<String> stringVar = var("eep");
+public class SampleSpec implements BalladSpec {{
+  final Var<Integer> intVar = var(2);
+  final Var<String> stringVar = var("eep");
 
-    Then(() -> false);
+  Then(() -> false); // FAIL
 
-    Then(() -> {
-      fail("boom");
-    });
+  Then(() -> {
+    fail("boom");
+  }); // FAIL
 
-    Then(2, (i) -> i < 2);
+  Then(intVar, (Integer i) -> i > 2); // FAIL
 
-    Then(intVar, (Integer i) -> i > 2);
+  Then(intVar, i -> {
+    assertThat(i, equalTo(42));
+  }); // FAIL
 
-    Then(13, i -> {
-      assertThat(i, equalTo(42));
-    });
+  Then(stringVar, (String s) -> {
+    assertThat(s, startsWith("sl"));
+  }); // FAIL
 
-    Then(13, equalTo(42));
-
-    Then(stringVar, (String s) -> {
-      assertThat(s, startsWith("sl"));
-    });
-
-    Then(stringVar, startsWith("sl"));
-  }
-}
+  Then(stringVar, startsWith("sl")); // FAIL
+  Then(stringVar, equalTo("eep"));   // PASS
+}}

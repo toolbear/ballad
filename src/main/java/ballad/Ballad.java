@@ -16,8 +16,6 @@ public class Ballad {
   }
 
   static final void retire(Scribe s) {
-    if (scribe.get() == s) {
-      scribe.remove();
-    }
+    if (scribe.get() == s) scribe.remove();
   }
 }

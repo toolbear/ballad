@@ -31,32 +31,14 @@ public class RecordingScribe implements Scribe {
   }
 
   @Override
-  public <T> void chroniclePostcondition(T value, Function1<Boolean, T> expression, PostconditionError eager) {
-    accumulator.add(() -> {
-      if (!expression.invoke(value)) throw eager;
-    });
-  }
-
-  @Override
-  public <T> void chroniclePostcondition(Var<T> var, Function1<Boolean, T> expression, PostconditionError eager) {
+  public <S, T extends S> void chroniclePostcondition(Var<T> var, Function1<Boolean, S> expression, PostconditionError eager) {
     accumulator.add(() -> {
       if (!expression.invoke(var.get())) throw eager;
     });
   }
 
   @Override
-  public <T> void chroniclePostcondition(T value, Procedure1<T> proc, PostconditionError eager) {
-    accumulator.add(() -> {
-      try {
-        proc.invoke(value);
-      } catch (final AssertionError cause) {
-        throw new PostconditionError(eager, cause);
-      }
-    });
-  }
-
-  @Override
-  public <T> void chroniclePostcondition(Var<T> var, Procedure1<T> proc, PostconditionError eager) {
+  public <S, T extends S> void chroniclePostcondition(Var<T> var, Procedure1<S> proc, PostconditionError eager) {
     accumulator.add(() -> {
       try {
         proc.invoke(var.get());
@@ -67,25 +49,12 @@ public class RecordingScribe implements Scribe {
   }
 
   @Override
-  public <T> void chroniclePostcondition(T value, Matcher<? super T> matchExpression, PostconditionError eager) {
-    accumulator.add(() -> {
-      if (!matchExpression.matches(value)) {
-        final Description description = new StringDescription();
-        description.appendText("").appendText("\nExpected: ").appendDescriptionOf(matchExpression)
-            .appendText("\n     but: ");
-        matchExpression.describeMismatch(value, description);
-        throw new PostconditionError(eager, description);
-      }
-    });
-  }
-
-  @Override
-  public <T> void chroniclePostcondition(Var<T> var, Matcher<? super T> matchExpression, PostconditionError eager) {
+  public <S, T extends S> void chroniclePostcondition(Var<T> var, Matcher<S> matchExpression, PostconditionError eager) {
     accumulator.add(() -> {
       if (!matchExpression.matches(var.get())) {
         final Description description = new StringDescription();
         description.appendText("").appendText("\nExpected: ").appendDescriptionOf(matchExpression)
-            .appendText("\n     but: ");
+        .appendText("\n     but: ");
         matchExpression.describeMismatch(var.get(), description);
         throw new PostconditionError(eager, description);
       }
