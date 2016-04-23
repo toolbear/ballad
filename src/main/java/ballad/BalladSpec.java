@@ -3,6 +3,14 @@ package ballad;
 import org.hamcrest.Matcher;
 
 public interface BalladSpec {
+  default void describe(Class<?> c, Procedure proc) {
+    Ballad.scribe().chronicleDescription(c, proc);
+  }
+
+  default void describe(String desc, Procedure proc) {
+    Ballad.scribe().chronicleDescription(desc, proc);
+  }
+
   default void Then(Function<Boolean> expression) {
     Ballad.scribe().chroniclePostcondition(expression, PostconditionError.eager());
   }
