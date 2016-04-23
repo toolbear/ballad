@@ -92,16 +92,19 @@ public class PostfixCalculatorSpec implements BalladSpec {
   * [ ] write more detailed example
   * [ ] installation instructions for Gradle, Maven, direct download
 * [ ] DSL
-  * `#Given(class|description)`
-  * `#describe` and `#context`
-  * `#Given(fn)`
-  * `#Given(Var<T> var, T value)`
-  * `#When(fn)`
-  * `#When(Var<T> var, T value)`
-  * `#Then(fn)`
-  * `#Then(value, matcher)`
-  * `#Then(Var<T> var, matcher)`
-  * `#Invariant(fn|value, matcher|Var<T> var, matcher)`
+  * [x] `#describe(class|description)`
+  * [x] `#context(description)`
+  * [ ] `#Given(description)`
+  * [ ] `#Given(fn)`
+  * [ ] `#Given(Var<T> var, T value)`
+  * [ ] `#When(fn)`
+  * [ ] `#When(Var<T> var, T value)`
+  * [x] `#Then(fn)`
+  * [x] `#Then(value, fn)`
+  * [x] `#Then(Var<T>, fn)`
+  * [x] `#Then(value, matcher)`
+  * [x] `#Then(Var<T> var, matcher)`
+  * [ ] `#Invariant(fn|value, matcher|Var<T> var, matcher)`
 * [ ] deploy
   * [ ] travis build
   * [ ] publish to maven

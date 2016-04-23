@@ -1,35 +1,49 @@
 
 import static ballad.Ballad.var;
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import org.junit.runner.RunWith;
+import ballad.Ballad;
 import ballad.BalladSpec;
 import ballad.Balladeer;
 import ballad.Var;
 
 @RunWith(Balladeer.class)
 public class SampleSpec implements BalladSpec {{
-  final Var<Integer> intVar = var(2);
-  final Var<String> stringVar = var("eep");
 
-  Then(() -> false); // FAIL
+  Then(() -> false);
 
-  Then(() -> {
-    fail("boom");
-  }); // FAIL
+  describe(Ballad.class, () -> {
+    Var<Integer> intVar = var(2);
+    Var<String> stringVar = var("eep");
 
-  Then(intVar, (Integer i) -> i > 2); // FAIL
+    Then(() -> false);
 
-  Then(intVar, i -> {
-    assertThat(i, equalTo(42));
-  }); // FAIL
+    Then(() -> {
+      fail("boom");
+    });
 
-  Then(stringVar, (String s) -> {
-    assertThat(s, startsWith("sl"));
-  }); // FAIL
+    Then(intVar, (Integer i) -> i > 2);
 
-  Then(stringVar, startsWith("sl")); // FAIL
-  Then(stringVar, equalTo("eep"));   // PASS
+    Then(stringVar, (String s) -> {
+      assertThat(s, startsWith("sl"));
+    });
+
+    Then(stringVar, startsWith("sl"));
+
+    describe("when nested", () -> {
+      Then(() -> true);
+
+      describe("deeply", () -> {
+        Then(() -> false);
+      });
+
+      context("is contextualized", () -> {
+        Then(() -> true);
+        Then(() -> false);
+      });
+    });
+  });
+
 }}

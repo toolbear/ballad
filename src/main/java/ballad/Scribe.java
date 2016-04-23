@@ -3,6 +3,10 @@ package ballad;
 import org.hamcrest.Matcher;
 
 interface Scribe {
+  void chronicleContext(Class<?> c, Procedure proc);
+
+  void chronicleContext(String desc, Procedure proc);
+
   void chroniclePostcondition(Function<Boolean> expression, PostconditionError eager);
 
   void chroniclePostcondition(Procedure proc, PostconditionError eager);

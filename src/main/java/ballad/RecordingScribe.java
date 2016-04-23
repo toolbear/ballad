@@ -7,56 +7,106 @@ import org.hamcrest.StringDescription;
 
 public class RecordingScribe implements Scribe {
   private final Collection<Postcondition> accumulator;
+  private Context context;
 
-  RecordingScribe(Collection<Postcondition> acc) {
+  private static abstract class ContextualizedPostcondition implements Postcondition {
+    private final Context context;
+
+    ContextualizedPostcondition(Context context) {
+      this.context = context;
+    }
+
+    @Override
+    public final Context context() {
+      return context;
+    }
+  }
+
+  RecordingScribe(Collection<Postcondition> acc, Context initial) {
     this.accumulator = acc;
+    this.context = initial;
+  }
+
+  @Override
+  public void chronicleContext(Class<?> c, Procedure proc) {
+    context = new Context(context, c);
+    try {
+      proc.invoke();
+    } finally {
+      context = context.context();
+    }
+  }
+
+  @Override
+  public void chronicleContext(String desc, Procedure proc) {
+    context = new Context(context, desc);
+    try {
+      proc.invoke();
+    } finally {
+      context = context.context();
+    }
   }
 
   @Override
   public void chroniclePostcondition(Function<Boolean> expression, PostconditionError eager) {
-    accumulator.add(() -> {
-      if (!expression.invoke()) throw eager;
+    accumulator.add(new ContextualizedPostcondition(context) {
+      @Override
+      public void verify() {
+        if (!expression.invoke()) throw eager;
+      }
     });
   }
 
   @Override
   public void chroniclePostcondition(Procedure proc, PostconditionError eager) {
-    accumulator.add(() -> {
-      try {
-        proc.invoke();
-      } catch (final AssertionError cause) {
-        throw new PostconditionError(eager, cause);
+    accumulator.add(new ContextualizedPostcondition(context) {
+      @Override
+      public void verify() {
+        try {
+          proc.invoke();
+        } catch (final AssertionError cause) {
+          throw new PostconditionError(eager, cause);
+        }
       }
     });
   }
 
   @Override
   public <S, T extends S> void chroniclePostcondition(Var<T> var, Function1<Boolean, S> expression, PostconditionError eager) {
-    accumulator.add(() -> {
-      if (!expression.invoke(var.get())) throw eager;
+    accumulator.add(new ContextualizedPostcondition(context) {
+      @Override
+      public void verify() {
+        if (!expression.invoke(var.get())) throw eager;
+      }
     });
   }
 
   @Override
   public <S, T extends S> void chroniclePostcondition(Var<T> var, Procedure1<S> proc, PostconditionError eager) {
-    accumulator.add(() -> {
-      try {
-        proc.invoke(var.get());
-      } catch (final AssertionError cause) {
-        throw new PostconditionError(eager, cause);
+    accumulator.add(new ContextualizedPostcondition(context) {
+      @Override
+      public void verify() {
+        try {
+          proc.invoke(var.get());
+        } catch (final AssertionError cause) {
+          throw new PostconditionError(eager, cause);
+        }
       }
     });
   }
 
   @Override
   public <S, T extends S> void chroniclePostcondition(Var<T> var, Matcher<S> matchExpression, PostconditionError eager) {
-    accumulator.add(() -> {
-      if (!matchExpression.matches(var.get())) {
-        final Description description = new StringDescription();
-        description.appendText("").appendText("\nExpected: ").appendDescriptionOf(matchExpression)
-        .appendText("\n     but: ");
-        matchExpression.describeMismatch(var.get(), description);
-        throw new PostconditionError(eager, description);
+    accumulator.add(new ContextualizedPostcondition(context) {
+      @Override
+      public void verify() {
+        if (!matchExpression.matches(var.get())) {
+          final Description description = new StringDescription();
+          description.appendText("").appendText("\nExpected: ").appendDescriptionOf(matchExpression)
+          .appendText("\n     but: ");
+          matchExpression.describeMismatch(var.get(), description);
+          throw new PostconditionError(eager, description);
+        }
       }
     });
   }
