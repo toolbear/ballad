@@ -92,8 +92,9 @@ public class PostfixCalculatorSpec implements BalladSpec {
   * [ ] write more detailed example
   * [ ] installation instructions for Gradle, Maven, direct download
 * [ ] DSL
-  * [ ] `#Given(class|description)`
-  * [ ] `#describe` and `#context`
+  * [x] `#describe(class|description)`
+  * [x] `#context(description)`
+  * [ ] `#Given(description)`
   * [ ] `#Given(fn)`
   * [ ] `#Given(Var<T> var, T value)`
   * [ ] `#When(fn)`

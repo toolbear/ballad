@@ -4,11 +4,15 @@ import org.hamcrest.Matcher;
 
 public interface BalladSpec {
   default void describe(Class<?> c, Procedure proc) {
-    Ballad.scribe().chronicleDescription(c, proc);
+    Ballad.scribe().chronicleContext(c, proc);
+  }
+
+  default void context(String desc, Procedure proc) {
+    Ballad.scribe().chronicleContext(desc, proc);
   }
 
   default void describe(String desc, Procedure proc) {
-    Ballad.scribe().chronicleDescription(desc, proc);
+    Ballad.scribe().chronicleContext(desc, proc);
   }
 
   default void Then(Function<Boolean> expression) {

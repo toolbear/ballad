@@ -28,7 +28,7 @@ public class RecordingScribe implements Scribe {
   }
 
   @Override
-  public void chronicleDescription(Class<?> c, Procedure proc) {
+  public void chronicleContext(Class<?> c, Procedure proc) {
     context = new Context(context, c);
     try {
       proc.invoke();
@@ -38,7 +38,7 @@ public class RecordingScribe implements Scribe {
   }
 
   @Override
-  public void chronicleDescription(String desc, Procedure proc) {
+  public void chronicleContext(String desc, Procedure proc) {
     context = new Context(context, desc);
     try {
       proc.invoke();

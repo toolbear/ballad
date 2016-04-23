@@ -38,6 +38,12 @@ public class SampleSpec implements BalladSpec {{
       describe("deeply", () -> {
         Then(() -> false);
       });
+
+      context("is contextualized", () -> {
+        Then(() -> true);
+        Then(() -> false);
+      });
     });
   });
+
 }}
