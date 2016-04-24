@@ -97,7 +97,6 @@ public class Balladeer extends ParentRunner<Postcondition> {
 
   @Override
   protected void runChild(Postcondition postcondition, RunNotifier notifier) {
-    notifier.fireTestStarted(cache.get(postcondition));
     try {
       Deque<Context> stack = contexts(postcondition.context());
       stack.stream()
