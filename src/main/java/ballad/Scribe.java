@@ -11,6 +11,14 @@ interface Scribe {
 
   <S, T extends S> void chroniclePrecondition(Var<S> var, Function<T> expression);
 
+  default void chronicleSpecification(Procedure proc) {}
+
+  default <S, T extends S> void chronicleSpecification(Var<S> var, Function<T> expression) {}
+
+  default <S, T extends S> void chronicleSpecification(Var<S> var, Function1<T, S> expression) {}
+
+  default <S, T extends S> void chronicleSpecification(Var<T> var, Procedure1<S> proc) {}
+
   void chroniclePostcondition(Function<Boolean> expression, PostconditionError eager);
 
   void chroniclePostcondition(Procedure proc, PostconditionError eager);

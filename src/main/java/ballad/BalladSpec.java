@@ -23,6 +23,22 @@ public interface BalladSpec {
     Ballad.scribe().chroniclePrecondition(var, expression);
   }
 
+  default void When(Procedure proc) {
+    Ballad.scribe().chronicleSpecification(proc);
+  }
+
+  default <S, T extends S> void When(Var<S> var, Function<T> expression) {
+    Ballad.scribe().chronicleSpecification(var, expression);
+  }
+
+  default <S, T extends S> void When(Var<S> var, Function1<T, S> expression) {
+    Ballad.scribe().chronicleSpecification(var, expression);
+  }
+
+  default <S, T extends S> void When(Var<T> var, Procedure1<S> proc) {
+    Ballad.scribe().chronicleSpecification(var, proc);
+  }
+
   default void Then(Function<Boolean> expression) {
     Ballad.scribe().chroniclePostcondition(expression, PostconditionError.eager());
   }

@@ -25,9 +25,16 @@ public class FailingSpec implements BalladSpec {{
 
     Var<Integer> v1 = var();
     Var<String>  v2 = var();
+    Var<Double> result = var();
 
-    Given(v1, () -> 2);
-    Given(v2, () -> "eep");
+    Given(v1, () -> 3);
+    Given(v2, () -> "sleep");
+
+    When(() -> {
+      v1.set(2);
+    });
+
+    When(result, () -> Math.PI);
 
     Then(v1, i -> i > 2);
     Then(v1, equalTo(3));
@@ -38,6 +45,8 @@ public class FailingSpec implements BalladSpec {{
 
     Then(v2, startsWith("sl"));
     Then(v2, equalTo("beep"));
+
+    Then(result, r -> r < Math.E);
 
     describe("when nested", () -> {
       Given(v1, () -> 1);

@@ -22,11 +22,18 @@ public class PassingSpec implements BalladSpec {{
 
     Var<Integer> v1 = var();
     Var<String>  v2 = var();
+    Var<Double> result = var();
 
     Given(v1, () -> 2);
     Given(v2, () -> "eep");
 
-    Then(v1, i -> i <= 2);
+    When(() -> {
+      v1.set(1);
+    });
+
+    When(result, () -> Math.E);
+
+    Then(v1, i -> i < 2);
     Then(v1, equalTo(2));
 
     Then(v2, s -> {
@@ -35,6 +42,8 @@ public class PassingSpec implements BalladSpec {{
 
     Then(v2, startsWith("ee"));
     Then(v2, equalTo("eep"));
+
+    Then(result, r -> r < Math.E);
 
     describe("when nested", () -> {
       Given(v1, () -> 1);
