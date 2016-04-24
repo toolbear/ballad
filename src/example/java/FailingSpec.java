@@ -2,14 +2,20 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import org.junit.runner.RunWith;
-import ballad.BalladSpec;
-import ballad.Balladeer;
-import ballad.Var;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import ballad.*;
 
-class Failing {}
-
-@RunWith(Balladeer.class)
+/**
+ * Every postcondition (i.e. <code>Then(…)</code> clause) in <code>FailingSpec</code> should fail.
+ * Passing postconditions likely represents an internal bug in Ballad.
+ * <p>
+ * <code>FailingSpec</code> exhaustively exercises the Ballad DSL; it isn't necessarily a good
+ * example of testing style.
+ *
+ * @see PassingSpec
+ */
+@org.junit.runner.RunWith(Balladeer.class)
 public class FailingSpec implements BalladSpec {{
 
   Then(() -> false);
@@ -76,4 +82,9 @@ public class FailingSpec implements BalladSpec {{
       });
     });
   });
+
 }}
+
+class Failing {
+  void doIt(Runnable r) {}
+}

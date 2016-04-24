@@ -1,14 +1,19 @@
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
-import org.junit.runner.RunWith;
-import ballad.BalladSpec;
-import ballad.Balladeer;
-import ballad.Var;
+import static org.mockito.Mockito.mock;
+import ballad.*;
 
-class Passing {}
-
-@RunWith(Balladeer.class)
+/**
+ * Every postcondition in <code>PassingSpec</code> should pass. Failures likely represents an
+ * internal bug in Ballad.
+ * <p>
+ * <code>PassingSpec</code> exhaustively exercises the Ballad DSL; it isn't necessarily a good
+ * example of testing style.
+ *
+ * @see FailingSpec
+ */
+@org.junit.runner.RunWith(Balladeer.class)
 public class PassingSpec implements BalladSpec {{
 
   Then(() -> true);
@@ -74,3 +79,9 @@ public class PassingSpec implements BalladSpec {{
     });
   });
 }}
+
+class Passing {
+  void doIt(Runnable r) {
+    r.run();
+  }
+}

@@ -92,6 +92,8 @@ public class PostfixCalculatorSpec implements BalladSpec {
   * [ ] write more detailed example
   * [ ] installation instructions for Gradle, Maven, direct download
 
+* [ ] backfill unit tests
+
 * [ ] DSL
   * [x] `describe` and `context`
   * [x] `var`
@@ -100,6 +102,7 @@ public class PostfixCalculatorSpec implements BalladSpec {
   * [x] `Then`
   * [ ] `Invariant`
   * [ ] pending tests (`xdescribe` and/or `@Pending`)
+  * [ ] JavaDoc the public API surface
 
 * [ ] deploy
   * [ ] travis build
