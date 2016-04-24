@@ -67,12 +67,7 @@ public class Balladeer extends ParentRunner<Postcondition> {
   private Description asJUnitDescription(Postcondition postcondition) {
     Description result = cache.get(postcondition);
     if (result == null) {
-      Deque<Context> stack = new ArrayDeque<>();
-      Context context = postcondition.context();
-      while (!context.isRoot()) {
-        stack.push(context);
-        context = context.context();
-      }
+      Deque<Context> stack = contexts(postcondition.context());
       stack.stream()
       .filter(c -> !cache.containsKey(c))
       .forEachOrdered(c -> {
@@ -91,12 +86,25 @@ public class Balladeer extends ParentRunner<Postcondition> {
     return result;
   }
 
+  private Deque<Context> contexts(Context context) {
+    Deque<Context> stack = new ArrayDeque<>();
+    while (!context.isRoot()) {
+      stack.push(context);
+      context = context.context();
+    }
+    return stack;
+  }
+
   @Override
   protected void runChild(Postcondition postcondition, RunNotifier notifier) {
-    notifier.fireTestStarted(cache.get(postcondition));
     try {
+      Deque<Context> stack = contexts(postcondition.context());
+      stack.stream()
+      .map(ctx -> ctx.preconditions())
+      .flatMap(l -> l.stream())
+      .forEachOrdered(Precondition::establish);
       postcondition.verify();
-    } catch (final AssertionError e) {
+    } catch (AssertionError|SpecificationError e) {
       notifier.fireTestFailure(new Failure(cache.get(postcondition), e));
     }
   }

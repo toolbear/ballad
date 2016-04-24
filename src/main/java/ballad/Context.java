@@ -1,8 +1,12 @@
 package ballad;
 
+import java.util.ArrayList;
+import java.util.List;
+
 final class Context {
   private final Context outer;
   private final String description;
+  private final List<Precondition> preconditions;
 
   Context(Class<?> spec) {
     this(null, spec.getSimpleName(), true);
@@ -19,14 +23,19 @@ final class Context {
   private Context(Context outer, String desc, boolean isRoot) {
     this.outer = outer;
     this.description = desc;
+    this.preconditions = new ArrayList<>();
   }
 
-  public Context context() {
+  Context context() {
     return outer;
   }
 
-  public String description() {
+  String description() {
     return description;
+  }
+
+  List<Precondition> preconditions() {
+    return preconditions;
   }
 
   @Override
@@ -34,7 +43,11 @@ final class Context {
     return String.format("Context<%s>", description);
   }
 
-  public boolean isRoot() {
+  boolean isRoot() {
     return outer == null;
+  }
+
+  void addPrecondition(Precondition pre) {
+    this.preconditions.add(pre);
   }
 }

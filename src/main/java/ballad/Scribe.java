@@ -7,6 +7,10 @@ interface Scribe {
 
   void chronicleContext(String desc, Procedure proc);
 
+  void chroniclePrecondition(Procedure proc);
+
+  <S, T extends S> void chroniclePrecondition(Var<S> var, Function<T> expression);
+
   void chroniclePostcondition(Function<Boolean> expression, PostconditionError eager);
 
   void chroniclePostcondition(Procedure proc, PostconditionError eager);

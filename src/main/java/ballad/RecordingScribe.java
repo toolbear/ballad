@@ -9,10 +9,10 @@ public class RecordingScribe implements Scribe {
   private final Collection<Postcondition> accumulator;
   private Context context;
 
-  private static abstract class ContextualizedPostcondition implements Postcondition {
+  private static abstract class ContextualPostcondition implements Postcondition {
     private final Context context;
 
-    ContextualizedPostcondition(Context context) {
+    ContextualPostcondition(Context context) {
       this.context = context;
     }
 
@@ -48,8 +48,22 @@ public class RecordingScribe implements Scribe {
   }
 
   @Override
+  public void chroniclePrecondition(Procedure proc) {
+    context.addPrecondition(() -> {
+      proc.invoke();
+    });
+  }
+
+  @Override
+  public <S, T extends S> void chroniclePrecondition(Var<S> var, Function<T> expression) {
+    context.addPrecondition(() -> {
+      var.set(expression.invoke());
+    });
+  }
+
+  @Override
   public void chroniclePostcondition(Function<Boolean> expression, PostconditionError eager) {
-    accumulator.add(new ContextualizedPostcondition(context) {
+    accumulator.add(new ContextualPostcondition(context) {
       @Override
       public void verify() {
         if (!expression.invoke()) throw eager;
@@ -59,7 +73,7 @@ public class RecordingScribe implements Scribe {
 
   @Override
   public void chroniclePostcondition(Procedure proc, PostconditionError eager) {
-    accumulator.add(new ContextualizedPostcondition(context) {
+    accumulator.add(new ContextualPostcondition(context) {
       @Override
       public void verify() {
         try {
@@ -73,9 +87,10 @@ public class RecordingScribe implements Scribe {
 
   @Override
   public <S, T extends S> void chroniclePostcondition(Var<T> var, Function1<Boolean, S> expression, PostconditionError eager) {
-    accumulator.add(new ContextualizedPostcondition(context) {
+    accumulator.add(new ContextualPostcondition(context) {
       @Override
       public void verify() {
+        if (!var.initialized()) throw new UninitializedVarError(eager);
         if (!expression.invoke(var.get())) throw eager;
       }
     });
@@ -83,9 +98,10 @@ public class RecordingScribe implements Scribe {
 
   @Override
   public <S, T extends S> void chroniclePostcondition(Var<T> var, Procedure1<S> proc, PostconditionError eager) {
-    accumulator.add(new ContextualizedPostcondition(context) {
+    accumulator.add(new ContextualPostcondition(context) {
       @Override
       public void verify() {
+        if (!var.initialized()) throw new UninitializedVarError(eager);
         try {
           proc.invoke(var.get());
         } catch (final AssertionError cause) {
@@ -97,14 +113,16 @@ public class RecordingScribe implements Scribe {
 
   @Override
   public <S, T extends S> void chroniclePostcondition(Var<T> var, Matcher<S> matchExpression, PostconditionError eager) {
-    accumulator.add(new ContextualizedPostcondition(context) {
+    accumulator.add(new ContextualPostcondition(context) {
       @Override
       public void verify() {
-        if (!matchExpression.matches(var.get())) {
+        if (!var.initialized()) throw new UninitializedVarError(eager);
+        T val = var.get();
+        if (!matchExpression.matches(val)) {
           final Description description = new StringDescription();
           description.appendText("").appendText("\nExpected: ").appendDescriptionOf(matchExpression)
           .appendText("\n     but: ");
-          matchExpression.describeMismatch(var.get(), description);
+          matchExpression.describeMismatch(val, description);
           throw new PostconditionError(eager, description);
         }
       }

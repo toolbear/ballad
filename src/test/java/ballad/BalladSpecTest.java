@@ -52,37 +52,41 @@ public class BalladSpecTest implements WithMockito {
 
   @Test
   public void varAndBooleanPostcondition() {
-    final Var<Integer> value = var(42);
+    final Var<Integer> var = var();
+    var.set(42);
+
     final Function1<Boolean, Integer> postcondition = (v) -> v > 0;
 
     new BalladSpec() {
       {
-        Then(value, postcondition);
+        Then(var, postcondition);
       }
     };
 
-    verify(scribe).chroniclePostcondition(eq(value), eq(postcondition), anyPostconditionError());
+    verify(scribe).chroniclePostcondition(eq(var), eq(postcondition), anyPostconditionError());
   }
 
   @Test
   public void varAndProceduralPostcondition() {
-    final Var<Integer> value = var(42);
+    final Var<Integer> var = var();
+    var.set(42);
     final Procedure1<Integer> postcondition = (v) -> {
       assert v > 0;
     };
 
     new BalladSpec() {
       {
-        Then(value, postcondition);
+        Then(var, postcondition);
       }
     };
 
-    verify(scribe).chroniclePostcondition(eq(value), eq(postcondition), anyPostconditionError());
+    verify(scribe).chroniclePostcondition(eq(var), eq(postcondition), anyPostconditionError());
   }
 
   @Test
   public void varAndMatcherPostcondition() {
-    final Var<String> var = var("whatever");
+    final Var<String> var = var();
+    var.set("whatever");
     final Matcher<String> isAnything = CoreMatchers.any(String.class);
 
     new BalladSpec() {
