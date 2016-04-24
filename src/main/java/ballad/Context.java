@@ -26,15 +26,15 @@ final class Context {
     this.preconditions = new ArrayList<>();
   }
 
-  public Context context() {
+  Context context() {
     return outer;
   }
 
-  public String description() {
+  String description() {
     return description;
   }
 
-  public Iterable<Precondition> preconditions() {
+  List<Precondition> preconditions() {
     return preconditions;
   }
 
@@ -43,11 +43,11 @@ final class Context {
     return String.format("Context<%s>", description);
   }
 
-  public boolean isRoot() {
+  boolean isRoot() {
     return outer == null;
   }
 
-  public void addPrecondition(Precondition pre) {
+  void addPrecondition(Precondition pre) {
     this.preconditions.add(pre);
   }
 }

@@ -3,12 +3,8 @@ package ballad;
 public class Ballad {
   private static final ThreadLocal<Scribe> scribe = new ThreadLocal<>();
 
-  public static final <T> Var<T> var(T value) {
-    return new Var<>(value);
-  }
-
   public static final <T> Var<T> var() {
-    return new Var<>(null);
+    return new Var<>();
   }
 
   static final void recruit(Scribe s) {

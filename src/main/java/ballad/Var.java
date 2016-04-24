@@ -2,9 +2,12 @@ package ballad;
 
 public final class Var<T> {
   private T value;
+  private boolean initialized = false;
 
-  Var(T value) {
-    this.value = value;
+  Var() {}
+
+  boolean initialized() {
+    return initialized;
   }
 
   public T get() {
@@ -13,10 +16,13 @@ public final class Var<T> {
 
   public void set(T value) {
     this.value = value;
+    this.initialized = true;
   }
 
   @Override
   public String toString() {
-    return String.format("Var❪%s❫", value);
+    return initialized
+        ? String.format("Var<%s>❪%s❫", value != null ? value.getClass().getSimpleName() : "", value)
+            : "Var<>";
   }
 }
