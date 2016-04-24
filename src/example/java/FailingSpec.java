@@ -1,5 +1,3 @@
-
-import static ballad.Ballad.var;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;

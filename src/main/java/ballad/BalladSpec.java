@@ -3,6 +3,10 @@ package ballad;
 import org.hamcrest.Matcher;
 
 public interface BalladSpec {
+  default <T> Var<T> var() {
+    return Ballad.var();
+  }
+
   default void describe(Class<?> c, Procedure proc) {
     Ballad.scribe().chronicleContext(c, proc);
   }

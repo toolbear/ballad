@@ -3,7 +3,7 @@ package ballad;
 public class Ballad {
   private static final ThreadLocal<Scribe> scribe = new ThreadLocal<>();
 
-  public static final <T> Var<T> var() {
+  static final <T> Var<T> var() {
     return new Var<>();
   }
 

@@ -94,6 +94,7 @@ public class PostfixCalculatorSpec implements BalladSpec {
 
 * [ ] DSL
   * [x] `describe` and `context`
+  * [x] `var`
   * [x] `Given`
   * [ ] `When`
   * [x] `Then`
