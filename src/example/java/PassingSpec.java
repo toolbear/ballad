@@ -1,9 +1,8 @@
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import ballad.*;
+import ballad.trait.WithMockito;
 
 /**
  * Every postcondition in <code>PassingSpec</code> should pass. Failures likely represents an
@@ -15,7 +14,7 @@ import ballad.*;
  * @see FailingSpec
  */
 @org.junit.runner.RunWith(Balladeer.class)
-public class PassingSpec implements BalladSpec {{
+public class PassingSpec implements BalladSpec, WithMockito {{
 
   Then(() -> true);
 
