@@ -6,7 +6,7 @@ import java.util.List;
 final class Context {
   private final Context outer;
   private final String description;
-  private final List<Precondition> preconditions;
+  private final List<Clause> clauses;
 
   Context(Class<?> spec) {
     this(null, spec.getSimpleName(), true);
@@ -23,7 +23,7 @@ final class Context {
   private Context(Context outer, String desc, boolean isRoot) {
     this.outer = outer;
     this.description = desc;
-    this.preconditions = new ArrayList<>();
+    this.clauses = new ArrayList<>();
   }
 
   Context context() {
@@ -34,8 +34,8 @@ final class Context {
     return description;
   }
 
-  List<Precondition> preconditions() {
-    return preconditions;
+  List<Clause> clauses() {
+    return clauses;
   }
 
   @Override
@@ -47,7 +47,11 @@ final class Context {
     return outer == null;
   }
 
-  void addPrecondition(Precondition pre) {
-    this.preconditions.add(pre);
+  void addPrecondition(Precondition p) {
+    clauses.add(p);
+  }
+
+  void addSpecification(Specification s) {
+    clauses.add(s);
   }
 }

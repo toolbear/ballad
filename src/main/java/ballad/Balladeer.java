@@ -2,13 +2,9 @@ package ballad;
 
 import static org.junit.runner.Description.createSuiteDescription;
 import static org.junit.runner.Description.createTestDescription;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.runner.Description;
 import org.junit.runner.notification.Failure;
 import org.junit.runner.notification.RunNotifier;
@@ -20,13 +16,14 @@ public class Balladeer extends ParentRunner<Postcondition> {
   private final Class<?> spec;
   private final Description description;
   private final Map<Object, Description> cache;
+  private final Map<Postcondition, Deque<Context>> contexts;
 
   public Balladeer(Class<?> spec) throws InitializationError {
     this(new ArrayList<Postcondition>(), new Context(spec), spec);
   }
 
   private Balladeer(List<Postcondition> acc, Context context, Class<?> spec) throws InitializationError {
-    this(new RecordingScribe(acc, context), acc, context, spec);
+    this(new AccumulatingScribe(acc, context), acc, context, spec);
   }
 
   Balladeer(Scribe s, List<Postcondition> acc, Context root, Class<?> spec) throws InitializationError {
@@ -35,6 +32,7 @@ public class Balladeer extends ParentRunner<Postcondition> {
     this.spec = spec;
     this.description = createSuiteDescription(spec);
     this.cache = new HashMap<>();
+    this.contexts = new HashMap<>();
 
     cache.put(root, description);
     Ballad.recruit(s);
@@ -67,45 +65,49 @@ public class Balladeer extends ParentRunner<Postcondition> {
   private Description asJUnitDescription(Postcondition postcondition) {
     Description result = cache.get(postcondition);
     if (result == null) {
-      Deque<Context> stack = contexts(postcondition.context());
-      stack.stream()
-      .filter(c -> !cache.containsKey(c))
+      contextsFor(postcondition).filter(c -> !cache.containsKey(c))
       .forEachOrdered(c -> {
         Description desc = createSuiteDescription(c.description());
         cache.get(c.context()).addChild(desc);
         cache.put(c, desc);
       });
 
-      String stanza = stack.stream()
-          .map(Context::description)
-          .collect(Collectors.joining(" "));
-      result = createTestDescription(spec, String.format("%s (%h)", stanza, postcondition.hashCode()));
+      String stanza = contextsFor(postcondition).map(Context::description).collect(Collectors.joining(" "));
+      result = createTestDescription(spec, String.format("%s (%h)",
+          stanza,
+          postcondition.hashCode()));
       cache.get(postcondition.context()).addChild(result);
       cache.put(postcondition, result);
     }
     return result;
   }
 
-  private Deque<Context> contexts(Context context) {
-    Deque<Context> stack = new ArrayDeque<>();
-    while (!context.isRoot()) {
-      stack.push(context);
-      context = context.context();
-    }
-    return stack;
-  }
-
   @Override
   protected void runChild(Postcondition postcondition, RunNotifier notifier) {
     try {
-      Deque<Context> stack = contexts(postcondition.context());
-      stack.stream()
-      .map(ctx -> ctx.preconditions())
-      .flatMap(l -> l.stream())
-      .forEachOrdered(Precondition::establish);
+      clausesFor(postcondition).filter(Clause::isPrecondition).forEachOrdered(Clause::run);
+      clausesFor(postcondition).filter(Clause::isSpecification).forEachOrdered(Clause::run);
       postcondition.verify();
     } catch (AssertionError|SpecificationError e) {
       notifier.fireTestFailure(new Failure(cache.get(postcondition), e));
     }
+  }
+
+  private Stream<Clause> clausesFor(Postcondition postcondition) {
+    return contextsFor(postcondition).map(Context::clauses).flatMap(List::stream);
+  }
+
+  private Stream<Context> contextsFor(Postcondition postcondition) {
+    Deque<Context> stack = contexts.get(postcondition);
+    if (stack == null) {
+      stack = new ArrayDeque<>();
+      Context context = postcondition.context();
+      do {
+        stack.push(context);
+        context = context.context();
+      } while (context != null);
+      contexts.put(postcondition, stack);
+    }
+    return stack.stream();
   }
 }

@@ -3,6 +3,10 @@ package ballad;
 import org.hamcrest.Matcher;
 
 public interface BalladSpec {
+  default <T> Var<T> var() {
+    return Ballad.var();
+  }
+
   default void describe(Class<?> c, Procedure proc) {
     Ballad.scribe().chronicleContext(c, proc);
   }
@@ -21,6 +25,22 @@ public interface BalladSpec {
 
   default <S, T extends S> void Given(Var<S> var, Function<T> expression) {
     Ballad.scribe().chroniclePrecondition(var, expression);
+  }
+
+  default void When(Procedure proc) {
+    Ballad.scribe().chronicleSpecification(proc);
+  }
+
+  default <S, T extends S> void When(Var<S> var, Function<T> expression) {
+    Ballad.scribe().chronicleSpecification(var, expression);
+  }
+
+  default <S, T extends S> void When(Var<S> var, Function1<T, S> expression) {
+    Ballad.scribe().chronicleSpecification(var, expression);
+  }
+
+  default <S, T extends S> void When(Var<T> var, Procedure1<S> proc) {
+    Ballad.scribe().chronicleSpecification(var, proc);
   }
 
   default void Then(Function<Boolean> expression) {

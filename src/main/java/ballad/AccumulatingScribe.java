@@ -1,28 +1,13 @@
 package ballad;
 
 import java.util.Collection;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.StringDescription;
+import org.hamcrest.*;
 
-public class RecordingScribe implements Scribe {
+public class AccumulatingScribe implements Scribe {
   private final Collection<Postcondition> accumulator;
   private Context context;
 
-  private static abstract class ContextualPostcondition implements Postcondition {
-    private final Context context;
-
-    ContextualPostcondition(Context context) {
-      this.context = context;
-    }
-
-    @Override
-    public final Context context() {
-      return context;
-    }
-  }
-
-  RecordingScribe(Collection<Postcondition> acc, Context initial) {
+  AccumulatingScribe(Collection<Postcondition> acc, Context initial) {
     this.accumulator = acc;
     this.context = initial;
   }
@@ -49,15 +34,39 @@ public class RecordingScribe implements Scribe {
 
   @Override
   public void chroniclePrecondition(Procedure proc) {
-    context.addPrecondition(() -> {
-      proc.invoke();
-    });
+    context.addPrecondition(() -> proc.invoke());
   }
 
   @Override
   public <S, T extends S> void chroniclePrecondition(Var<S> var, Function<T> expression) {
     context.addPrecondition(() -> {
       var.set(expression.invoke());
+    });
+  }
+
+  @Override
+  public void chronicleSpecification(Procedure proc) {
+    context.addSpecification(() -> proc.invoke());
+  }
+
+  @Override
+  public <S, T extends S> void chronicleSpecification(Var<S> var, Function<T> expression) {
+    context.addPrecondition(() -> {
+      var.set(expression.invoke());
+    });
+  }
+
+  @Override
+  public <S, T extends S> void chronicleSpecification(Var<T> var, Procedure1<S> proc) {
+    context.addPrecondition(() -> {
+      proc.invoke(var.get());
+    });
+  }
+
+  @Override
+  public <S, T extends S> void chronicleSpecification(Var<S> var, Function1<T, S> expression) {
+    context.addSpecification(() -> {
+      var.set(expression.invoke(var.get()));
     });
   }
 
@@ -127,5 +136,18 @@ public class RecordingScribe implements Scribe {
         }
       }
     });
+  }
+
+  private static abstract class ContextualPostcondition implements Postcondition {
+    private final Context context;
+
+    ContextualPostcondition(Context context) {
+      this.context = context;
+    }
+
+    @Override
+    public final Context context() {
+      return context;
+    }
   }
 }
