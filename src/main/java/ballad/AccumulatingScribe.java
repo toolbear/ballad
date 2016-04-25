@@ -3,11 +3,11 @@ package ballad;
 import java.util.Collection;
 import org.hamcrest.*;
 
-public class RecordingScribe implements Scribe {
+public class AccumulatingScribe implements Scribe {
   private final Collection<Postcondition> accumulator;
   private Context context;
 
-  RecordingScribe(Collection<Postcondition> acc, Context initial) {
+  AccumulatingScribe(Collection<Postcondition> acc, Context initial) {
     this.accumulator = acc;
     this.context = initial;
   }

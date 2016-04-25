@@ -23,7 +23,7 @@ public class Balladeer extends ParentRunner<Postcondition> {
   }
 
   private Balladeer(List<Postcondition> acc, Context context, Class<?> spec) throws InitializationError {
-    this(new RecordingScribe(acc, context), acc, context, spec);
+    this(new AccumulatingScribe(acc, context), acc, context, spec);
   }
 
   Balladeer(Scribe s, List<Postcondition> acc, Context root, Class<?> spec) throws InitializationError {
