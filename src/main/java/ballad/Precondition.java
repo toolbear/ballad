@@ -1,5 +1,8 @@
 package ballad;
 
-public interface Precondition {
-  void establish();
+public interface Precondition extends Clause {
+  @Override
+  default boolean isPrecondition() {
+    return true;
+  }
 }

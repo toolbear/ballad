@@ -2,6 +2,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import ballad.*;
 
 /**
@@ -20,33 +21,36 @@ public class PassingSpec implements BalladSpec {{
 
   describe(Passing.class, () -> {
     Then(() -> true);
-
     Then(() -> {});
 
+    Var<Passing> subject = var();
     Var<Integer> v1 = var();
-    Var<String>  v2 = var();
+    Var<String> v2 = var();
+    Var<Runnable> v4 = var();
     Var<Double> result = var();
 
+    Given(subject, () -> new Passing());
     Given(v1, () -> 2);
     Given(v2, () -> "eep");
+    Given(v4, () -> mock(Runnable.class));
 
+    When(v1, i -> i - 1);
+    When(result, () -> Math.E);
     When(() -> {
-      v1.set(1);
+      subject.get().doIt(v4.get());
     });
 
-    When(result, () -> Math.E);
-
     Then(v1, i -> i < 2);
-    Then(v1, equalTo(2));
-
+    Then(v1, equalTo(1));
     Then(v2, s -> {
       assertThat(s, startsWith("ee"));
     });
-
     Then(v2, startsWith("ee"));
     Then(v2, equalTo("eep"));
-
-    Then(result, r -> r < Math.E);
+    Then(v4, mock -> {
+      verify(mock).run();
+    });
+    Then(result, r -> r < Math.PI);
 
     describe("when nested", () -> {
       Given(v1, () -> 1);

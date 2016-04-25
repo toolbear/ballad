@@ -1,5 +1,4 @@
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -7,8 +6,8 @@ import static org.mockito.Mockito.verify;
 import ballad.*;
 
 /**
- * Every postcondition (i.e. <code>Then(…)</code> clause) in <code>FailingSpec</code> should fail.
- * Passing postconditions likely represents an internal bug in Ballad.
+ * Every postcondition in <code>FailingSpec</code> should fail. Passes likely represents an
+ * internal bug in Ballad.
  * <p>
  * <code>FailingSpec</code> exhaustively exercises the Ballad DSL; it isn't necessarily a good
  * example of testing style.
@@ -22,34 +21,31 @@ public class FailingSpec implements BalladSpec {{
 
   describe(Failing.class, () -> {
     Then(() -> false);
+    Then(() -> fail("boom"));
 
-    Then(() -> {
-      fail("boom");
-    });
-
+    Var<Failing> subject = var();
     Var<Integer> v1 = var();
-    Var<String>  v2 = var();
+    Var<String> v2 = var();
+    Var<Runnable> v4 = var();
     Var<Double> result = var();
 
+    Given(subject, () -> new Failing());
     Given(v1, () -> 3);
     Given(v2, () -> "sleep");
+    Given(v4, () -> mock(Runnable.class));
 
-    When(() -> {
-      v1.set(2);
-    });
-
+    When(v1, i -> i - 1);
+    When(() -> subject.get().doIt(v4.get()));
     When(result, () -> Math.PI);
 
     Then(v1, i -> i > 2);
     Then(v1, equalTo(3));
-
-    Then(v2, s -> {
-      assertThat(s, startsWith("sl"));
+    Then(v2, s -> assertThat(s, startsWith("leep")));
+    Then(v2, endsWith("slee"));
+    Then(v2, equalTo("ee"));
+    Then(v4, mock -> {
+      verify(mock).run();
     });
-
-    Then(v2, startsWith("sl"));
-    Then(v2, equalTo("beep"));
-
     Then(result, r -> r < Math.E);
 
     describe("when nested", () -> {

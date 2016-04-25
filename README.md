@@ -98,7 +98,7 @@ public class PostfixCalculatorSpec implements BalladSpec {
   * [x] `describe` and `context`
   * [x] `var`
   * [x] `Given`
-  * [ ] `When`
+  * [x] `When`
   * [x] `Then`
   * [ ] `Invariant`
   * [ ] pending tests (`xdescribe` and/or `@Pending`)
