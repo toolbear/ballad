@@ -73,9 +73,10 @@ public class Balladeer extends ParentRunner<Postcondition> {
       });
 
       String stanza = contextsFor(postcondition).map(Context::description).collect(Collectors.joining(" "));
-      result = createTestDescription(spec, String.format("%s (%h)",
-          stanza,
-          postcondition.hashCode()));
+      result = createTestDescription(spec, stanza);
+      org.hamcrest.Description d = new org.hamcrest.StringDescription();
+      postcondition.describeTo(d);
+      result = createTestDescription(spec, String.format("%s %s", stanza, d));
       cache.get(postcondition.context()).addChild(result);
       cache.put(postcondition, result);
     }

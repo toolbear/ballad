@@ -124,6 +124,11 @@ public class AccumulatingScribe implements Scribe {
   public <S, T extends S> void chroniclePostcondition(Var<T> var, Matcher<S> matchExpression, PostconditionError eager) {
     accumulator.add(new ContextualPostcondition(context) {
       @Override
+      public void describeTo(Description description) {
+        matchExpression.describeTo(description);
+      }
+
+      @Override
       public void verify() {
         if (!var.initialized()) throw new UninitializedVarError(eager);
         T val = var.get();
