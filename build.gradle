@@ -65,3 +65,19 @@ contacts {
     github 'toolbear'
   }
 }
+
+bintray {
+  user = System.getenv('BINTRAY_USER')
+  key = System.getenv('BINTRAY_API_KEY')
+  dryRun = true
+  publish = false
+  pkg {
+    repo = 'toolbear'
+    userOrg = 'ballad'
+    websiteUrl = 'https://github.com/toolbear/${project.name}'
+    issueTrackerUrl = 'https://github.com/toolbear/${project.name}/issues'
+    vcsUrl = 'https://github.com/toolbear/${project.name}.git'
+    licenses = ['MIT']
+    labels = ['junit', 'bdd', 'given']
+  }
+}
