@@ -6,6 +6,7 @@ plugins {
   id 'nebula.project' version '3.1.0'
   id 'nebula.nebula-release' version '4.0.1'
   id 'nebula.nebula-bintray' version '3.3.4'
+  id 'nebula.lint' version '0.22.0'
 }
 
 description 'ballad: Given/When/Then for Java — a BDD JUnit extension inspired by rspec-given'
@@ -81,3 +82,5 @@ bintray {
     labels = ['junit', 'bdd', 'given']
   }
 }
+
+gradleLint.rules = ['dependency-parentheses', 'dependency-tuple']
