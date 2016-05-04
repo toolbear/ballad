@@ -55,8 +55,10 @@ test {
   }
 }
 
-eclipse {
-  classpath {
-    defaultOutputDir = file('build/eclipse')
+allprojects {
+  eclipse {
+    classpath {
+      defaultOutputDir = file('.gradle/build/eclipse')
+    }
   }
 }
