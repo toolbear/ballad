@@ -3,30 +3,30 @@ package ballad;
 import java.util.ArrayList;
 import java.util.List;
 
-final class Context {
-  private final Context outer;
+final class BlockContext {
+  private final BlockContext outer;
   private final String description;
   private final List<Clause> clauses;
 
-  Context(Class<?> spec) {
+  BlockContext(Class<?> spec) {
     this(null, spec.getSimpleName(), true);
   }
 
-  Context(Context outer, Class<?> subject) {
+  BlockContext(BlockContext outer, Class<?> subject) {
     this(outer, subject.getSimpleName(), false);
   }
 
-  Context(Context outer, String desc) {
+  BlockContext(BlockContext outer, String desc) {
     this(outer, desc, false);
   }
 
-  private Context(Context outer, String desc, boolean isRoot) {
+  private BlockContext(BlockContext outer, String desc, boolean isRoot) {
     this.outer = outer;
     this.description = desc;
     this.clauses = new ArrayList<>();
   }
 
-  Context context() {
+  BlockContext context() {
     return outer;
   }
 

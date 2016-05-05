@@ -3,30 +3,30 @@ package ballad;
 import java.util.Collection;
 import org.hamcrest.*;
 
-public class AccumulatingScribe implements Scribe {
+class AccumulatingScribe implements Scribe {
   private final Collection<Postcondition> accumulator;
-  private Context context;
+  private BlockContext context;
 
-  AccumulatingScribe(Collection<Postcondition> acc, Context initial) {
+  AccumulatingScribe(Collection<Postcondition> acc, BlockContext initial) {
     this.accumulator = acc;
     this.context = initial;
   }
 
   @Override
-  public void chronicleContext(Class<?> c, Procedure proc) {
-    context = new Context(context, c);
+  public void chronicleContext(Class<?> c, Block block) {
+    context = new BlockContext(context, c);
     try {
-      proc.invoke();
+      block.invoke();
     } finally {
       context = context.context();
     }
   }
 
   @Override
-  public void chronicleContext(String desc, Procedure proc) {
-    context = new Context(context, desc);
+  public void chronicleContext(String desc, Block block) {
+    context = new BlockContext(context, desc);
     try {
-      proc.invoke();
+      block.invoke();
     } finally {
       context = context.context();
     }
@@ -45,8 +45,8 @@ public class AccumulatingScribe implements Scribe {
   }
 
   @Override
-  public void chronicleSpecification(Procedure proc) {
-    context.addSpecification(() -> proc.invoke());
+  public void chronicleSpecification(Action action) {
+    context.addSpecification(() -> action.invoke());
   }
 
   @Override
@@ -57,9 +57,9 @@ public class AccumulatingScribe implements Scribe {
   }
 
   @Override
-  public <S, T extends S> void chronicleSpecification(Var<T> var, Procedure1<S> proc) {
+  public <S, T extends S> void chronicleSpecification(Var<T> var, Action1<S> action) {
     context.addPrecondition(() -> {
-      proc.invoke(var.get());
+      action.invoke(var.get());
     });
   }
 
@@ -71,7 +71,7 @@ public class AccumulatingScribe implements Scribe {
   }
 
   @Override
-  public void chroniclePostcondition(Function<Boolean> expression, PostconditionError eager) {
+  public void chroniclePostcondition(BooleanExpression expression, PostconditionError eager) {
     accumulator.add(new ContextualPostcondition(context) {
       @Override
       public void verify() {
@@ -81,12 +81,12 @@ public class AccumulatingScribe implements Scribe {
   }
 
   @Override
-  public void chroniclePostcondition(Procedure proc, PostconditionError eager) {
+  public void chroniclePostcondition(Assertion assertion, PostconditionError eager) {
     accumulator.add(new ContextualPostcondition(context) {
       @Override
       public void verify() {
         try {
-          proc.invoke();
+          assertion.invoke();
         } catch (final AssertionError cause) {
           throw new PostconditionError(eager, cause);
         }
@@ -95,7 +95,7 @@ public class AccumulatingScribe implements Scribe {
   }
 
   @Override
-  public <S, T extends S> void chroniclePostcondition(Var<T> var, Function1<Boolean, S> expression, PostconditionError eager) {
+  public <S, T extends S> void chroniclePostcondition(Var<T> var, BooleanExpression1<S> expression, PostconditionError eager) {
     accumulator.add(new ContextualPostcondition(context) {
       @Override
       public void verify() {
@@ -106,13 +106,13 @@ public class AccumulatingScribe implements Scribe {
   }
 
   @Override
-  public <S, T extends S> void chroniclePostcondition(Var<T> var, Procedure1<S> proc, PostconditionError eager) {
+  public <S, T extends S> void chroniclePostcondition(Var<T> var, Assertion1<S> assertion, PostconditionError eager) {
     accumulator.add(new ContextualPostcondition(context) {
       @Override
       public void verify() {
         if (!var.initialized()) throw new UninitializedVarError(eager);
         try {
-          proc.invoke(var.get());
+          assertion.invoke(var.get());
         } catch (final AssertionError cause) {
           throw new PostconditionError(eager, cause);
         }
@@ -139,14 +139,14 @@ public class AccumulatingScribe implements Scribe {
   }
 
   private static abstract class ContextualPostcondition implements Postcondition {
-    private final Context context;
+    private final BlockContext context;
 
-    ContextualPostcondition(Context context) {
+    ContextualPostcondition(BlockContext context) {
       this.context = context;
     }
 
     @Override
-    public final Context context() {
+    public final BlockContext context() {
       return context;
     }
   }

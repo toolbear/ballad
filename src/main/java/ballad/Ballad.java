@@ -1,6 +1,6 @@
 package ballad;
 
-public class Ballad {
+class Ballad {
   private static final ThreadLocal<Scribe> scribe = new ThreadLocal<>();
 
   static final <T> Var<T> var() {

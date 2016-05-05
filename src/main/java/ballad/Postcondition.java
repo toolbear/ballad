@@ -1,6 +1,6 @@
 package ballad;
 
 public interface Postcondition {
-  Context context();
+  BlockContext context();
   void verify();
 }

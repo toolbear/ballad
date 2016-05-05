@@ -16,17 +16,17 @@ public class Balladeer extends ParentRunner<Postcondition> {
   private final Class<?> spec;
   private final Description description;
   private final Map<Object, Description> cache;
-  private final Map<Postcondition, Deque<Context>> contexts;
+  private final Map<Postcondition, Deque<BlockContext>> contexts;
 
   public Balladeer(Class<?> spec) throws InitializationError {
-    this(new ArrayList<Postcondition>(), new Context(spec), spec);
+    this(new ArrayList<Postcondition>(), new BlockContext(spec), spec);
   }
 
-  private Balladeer(List<Postcondition> acc, Context context, Class<?> spec) throws InitializationError {
+  private Balladeer(List<Postcondition> acc, BlockContext context, Class<?> spec) throws InitializationError {
     this(new AccumulatingScribe(acc, context), acc, context, spec);
   }
 
-  Balladeer(Scribe s, List<Postcondition> acc, Context root, Class<?> spec) throws InitializationError {
+  Balladeer(Scribe s, List<Postcondition> acc, BlockContext root, Class<?> spec) throws InitializationError {
     super(spec);
     this.accumulator = acc;
     this.spec = spec;
@@ -72,7 +72,7 @@ public class Balladeer extends ParentRunner<Postcondition> {
         cache.put(c, desc);
       });
 
-      String stanza = contextsFor(postcondition).map(Context::description).collect(Collectors.joining(" "));
+      String stanza = contextsFor(postcondition).map(BlockContext::description).collect(Collectors.joining(" "));
       result = createTestDescription(spec, String.format("%s (%h)",
           stanza,
           postcondition.hashCode()));
@@ -94,14 +94,14 @@ public class Balladeer extends ParentRunner<Postcondition> {
   }
 
   private Stream<Clause> clausesFor(Postcondition postcondition) {
-    return contextsFor(postcondition).map(Context::clauses).flatMap(List::stream);
+    return contextsFor(postcondition).map(BlockContext::clauses).flatMap(List::stream);
   }
 
-  private Stream<Context> contextsFor(Postcondition postcondition) {
-    Deque<Context> stack = contexts.get(postcondition);
+  private Stream<BlockContext> contextsFor(Postcondition postcondition) {
+    Deque<BlockContext> stack = contexts.get(postcondition);
     if (stack == null) {
       stack = new ArrayDeque<>();
-      Context context = postcondition.context();
+      BlockContext context = postcondition.context();
       do {
         stack.push(context);
         context = context.context();

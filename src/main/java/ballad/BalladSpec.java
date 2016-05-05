@@ -7,16 +7,16 @@ public interface BalladSpec {
     return Ballad.var();
   }
 
-  default void describe(Class<?> c, Procedure proc) {
-    Ballad.scribe().chronicleContext(c, proc);
+  default void describe(Class<?> c, Block block) {
+    Ballad.scribe().chronicleContext(c, block);
   }
 
-  default void context(String desc, Procedure proc) {
-    Ballad.scribe().chronicleContext(desc, proc);
+  default void describe(String desc, Block block) {
+    Ballad.scribe().chronicleContext(desc, block);
   }
 
-  default void describe(String desc, Procedure proc) {
-    Ballad.scribe().chronicleContext(desc, proc);
+  default void context(String desc, Block block) {
+    Ballad.scribe().chronicleContext(desc, block);
   }
 
   default void Given(Procedure proc) {
@@ -27,8 +27,8 @@ public interface BalladSpec {
     Ballad.scribe().chroniclePrecondition(var, expression);
   }
 
-  default void When(Procedure proc) {
-    Ballad.scribe().chronicleSpecification(proc);
+  default void When(Action action) {
+    Ballad.scribe().chronicleSpecification(action);
   }
 
   default <S, T extends S> void When(Var<S> var, Function<T> expression) {
@@ -39,24 +39,24 @@ public interface BalladSpec {
     Ballad.scribe().chronicleSpecification(var, expression);
   }
 
-  default <S, T extends S> void When(Var<T> var, Procedure1<S> proc) {
-    Ballad.scribe().chronicleSpecification(var, proc);
+  default <S, T extends S> void When(Var<T> var, Action1<S> action) {
+    Ballad.scribe().chronicleSpecification(var, action);
   }
 
-  default void Then(Function<Boolean> expression) {
+  default void Then(BooleanExpression expression) {
     Ballad.scribe().chroniclePostcondition(expression, PostconditionError.eager());
   }
 
-  default void Then(Procedure proc) {
-    Ballad.scribe().chroniclePostcondition(proc, PostconditionError.eager());
+  default void Then(Assertion assertion) {
+    Ballad.scribe().chroniclePostcondition(assertion, PostconditionError.eager());
   }
 
-  default <S, T extends S> void Then(Var<T> var, Function1<Boolean, S> expression) {
+  default <S, T extends S> void Then(Var<T> var,  BooleanExpression1<S> expression) {
     Ballad.scribe().chroniclePostcondition(var, expression, PostconditionError.eager());
   }
 
-  default <S, T extends S> void Then(Var<T> var, Procedure1<S> proc) {
-    Ballad.scribe().chroniclePostcondition(var, proc, PostconditionError.eager());
+  default <S, T extends S> void Then(Var<T> var, Assertion1<S> assertion) {
+    Ballad.scribe().chroniclePostcondition(var, assertion, PostconditionError.eager());
   }
 
   default <S, T extends S> void Then(Var<T> var, Matcher<S> matchExpression) {

@@ -3,9 +3,7 @@ package ballad;
 import static ballad.Ballad.var;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
@@ -24,7 +22,7 @@ public class BalladSpecTest implements WithMockito {
 
   @Test
   public void booleanPostcondition() {
-    final Function<Boolean> postcondition = () -> 2 != 3;
+    final BooleanExpression postcondition = () -> 2 != 3;
 
     new BalladSpec() {
       {
@@ -37,7 +35,7 @@ public class BalladSpecTest implements WithMockito {
 
   @Test
   public void proceduralPostcondition() {
-    final Procedure postcondition = () -> {
+    final Assertion postcondition = () -> {
       assert 2 != 3;
     };
 
@@ -55,7 +53,7 @@ public class BalladSpecTest implements WithMockito {
     final Var<Integer> var = var();
     var.set(42);
 
-    final Function1<Boolean, Integer> postcondition = (v) -> v > 0;
+    final BooleanExpression1<Integer> postcondition = (v) -> v > 0;
 
     new BalladSpec() {
       {
@@ -70,7 +68,7 @@ public class BalladSpecTest implements WithMockito {
   public void varAndProceduralPostcondition() {
     final Var<Integer> var = var();
     var.set(42);
-    final Procedure1<Integer> postcondition = (v) -> {
+    final Assertion1<Integer> postcondition = (v) -> {
       assert v > 0;
     };
 
