@@ -61,7 +61,7 @@ eclipse {
 }
 
 contacts {
-  'tim@tool-man.org' {
+  'tim@toolbear.io' {
     moniker 'Tim Taylor'
     github 'toolbear'
   }
