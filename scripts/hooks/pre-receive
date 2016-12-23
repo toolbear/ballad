@@ -21,7 +21,7 @@ function ci() {
 
 function main() {
   if [ -z "$GIT_DIR" ]; then
-    echo "Don't run this script from the command line." >&2
+    echo 'error: script meant to be run as a git hook.' >&2
     exit 1
   fi
 
